@@ -1,0 +1,374 @@
+To Study
+
+Plugins  : https://webkul.com/blog/magento2-use-plugins/
+	A plugin, or interceptor, is a class that modifies the behavior of public class functions by intercepting a function call and running code before, after, or around that function call. This allows you to substitute or extend the behavior of original, public methods for any class or interface.
+
+
+	ex : 
+		<?xml version="1.0"?>
+			<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+		    <type name="Magento\Checkout\Model\Cart">
+		        <plugin name="WebkulCart" type="Webkul\Test\Model\Cart" sortOrder="1" />
+		    </type>
+		</config>
+
+Event observer : https://www.cloudways.com/blog/magento-2-events-observers/
+	Working with events and observers is one of the ways to extend the core functionalities of the Magento Platform.
+	Events are dispatched by Magento 2 modules whenever specific actions are triggered. When an event dispatches, it passes data to the observer that is configured to watch (or monitor) that event. You can dispatch Magento 2 Events using the Magento\Framework\Event\Manager class. This class can be obtained through dependency injection by defining the dependency in the constructor method of the class.
+
+	Creating new events
+		Custom events can be dispatched by simply passing in a unique event name to the event manager when you call the dispatch function. Your unique event name is referenced in your module's events.xml file where you specify which observers will react to that event.
+
+		You can make the custom event my_module_event_after subscribable by declaring the MyCompany/MyModule/etc/events.xml file as follows:
+
+		<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+		    <event name="my_module_event_after">
+		        <observer name="my_module_event_after_observer" instance="MyCompany\MyModule\Observer\MyEvent"/>
+		    </event>
+		</config>
+
+		To dispatch that event 
+
+		 $this->eventManager->dispatch('my_module_event_after');
+
+
+
+Types & Virtual Types
+
+	Virtual types are a way to inject different dependencies into existing classes without affecting other classes.
+
+	Virtual Types allows us to modify existing classes without affecting the other classes and without having to create a new class file(it isn’t necessary but if we want then we can create it as well). We can use inject these Virtual Types where we need them.
+	
+	For example, the Magento\Framework\Session\Storage class takes a $namespace argument in its constructor, which defaults to the value 'default', and you could use the type definition to change the namespace to 'core'.
+
+	<type name="Magento\Framework\Session\Storage">
+	    <arguments>
+	        <argument name="namespace" xsi:type="string">core</argument>
+	    </arguments>
+	</type>
+	The above config would make it so that all instances of Magento\Framework\Session\Storage have a namespace of 'core'. Using a virtual type allows for the equivalent of a sub-class to be created, where only the sub-class has the altered argument values.
+
+	In the codebase we see the following two configurations:
+
+	<virtualType name="Magento\Core\Model\Session\Storage" type="Magento\Framework\Session\Storage">
+	    <arguments>
+	        <argument name="namespace" xsi:type="string">core</argument>
+	    </arguments>
+	</virtualType>
+
+	<type name="Magento\Framework\Session\Generic">
+	    <arguments>
+	        <argument name="storage" xsi:type="object">Magento\Core\Model\Session\Storage</argument>
+	    </arguments>
+	</type>
+	The first snippet creates a virtual type for Magento\Core\Model\Session\Storage which alters the namespace, and the second inject the virtual type into Magento\Framework\Session\Generic. This allows Magento\Framework\Session\Generic to be customized without affecting other classes that also declare a dependency on Magento\Framework\Session\Storage
+
+	ex : Magento\Eav\Model\Api\SearchCriteria\CollectionProcessor
+
+	
+Service contratcs
+	A service contract is a set of PHP interfaces that are defined for a module. A service contract includes data interfaces, which preserve data integrity, and service interfaces, which hide business logic details from service requestors such as controllers, web services, and other modules
+	Data interfaces are used to maintain the integrity of the data, data interfaces defines all the setters and getters for the related entity. Data interfaces resides in VendorName\ModuleName\Api\Data
+
+
+
+
+Prefrences 
+	Sometimes it is needed to override some code. Using plugins we will only be able to modify public methods, not private methods.
+	So to override some private function we may need to override that class. It is defined the following way.
+
+	<?xml version="1.0"?>
+	<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+	    <preference for="Magento\Checkout\Block\Onepage\Success" type="MyCompany\ModuleName\Block\Onepage\Success" />
+	</config>
+
+
+
+
+MVC vs MVVM
+
+	Model-View-Controller framework that divides an application into 3 components — model, view, and controller. 
+		The controller manages the user's requests. 
+		The model gives the controller a view of the data that the user has requested. 
+		The view provides different ways of representing the data that is derived from a model.
+		
+	Model View ViewModel is another architectite. MVVM architecture provides a more robust separation between the Model and the View layers.
+	Model conatins all the business logic
+	viw is responsible to display the outcome to the clint
+	The ViewModel interacts with the Model layer and exposes only necessary information to the View layer.
+	It acts as an interface between the Model and ViewModel to process all the business logic, handle incoming requests, manipulate data using the Model component, and interact with the Views to render the final output.
+	
+	
+	
+	 
+
+
+RabbitMQ
+	RabbitMQ is an open-source message broker. It offers a reliable, highly available, scalable, and portable messaging system.
+	Message queues provide an asynchronous communications mechanism in which the sender and the receiver of a message do not contact each other. Nor do they need to communicate with the message queue at the same time. When a sender places a message in a queue, it is stored until the recipient receives them.
+
+	http://localhost:15672
+
+
+New relic
+	The Most Popular Extension Builder for Magento 2. Magento 2 New Relic Reporting gives you detailed performance metrics for every aspect of your business, in real-time. It helps you save time 	and make informed decision which impacts your ability to deliver a better online experience for your customers
+	
+
+Setup Xdebug with PhpStorm
+	Go to settings -> php -> server -> Add a new server with port 80 and debugger as xdebug and do the file mapping.
+	Make chnages in the xdebig configuration as needed.
+
+
+
+PHPCS and PHPCBF
+	PHP_CodeSniffer is a set of two PHP scripts; the main phpcs script that tokenizes PHP, JavaScript and CSS files to detect violations of a defined coding standard, and a second phpcbf script to automatically correct coding standard violations. PHP_CodeSniffer is an essential development tool that ensures your code remains clean and consistent.
+
+	vendor/bin/phpcbf app/code/Magento/Catalog --standard=Magento2
+	vendor/bin/phpcs app/code/Magento/Catalog --standard=Magento2 --severity=10
+
+
+Source Model
+	A source model is the source of possible values for dropdown or multiselect form fields. Each value is a pair of actual value and displayed label. Source models are used for, but not limited to:
+
+	system configuration values
+	attribute values
+	grid column filters
+	custom Varien_Form instances
+
+
+Requisition list
+	Requisition list functionality is similar to wish lists, with the following differences:
+	A requisition list is not cleared after sending items to the shopping cart. It can be used multiple times.
+	The user interface for requisition lists uses a compact view to display many items.
+
+
+Factories : https://magento.stackexchange.com/a/250729
+	Factories are service classes that instantiate non-injectable classes, that is, models that represent a database entity. They create a layer of abstraction between the ObjectManager and business code.
+
+
+Proxy Classes
+	Proxies are used to solve a specific problem in Magento 2. Proxies work as a substitute. In programming, proxies are classes that can be used in place of any other classes. In Magento 2 Proxies are used on behalf of resource hungry classes.
+	when your class will be instantiated all the dependencies injected in your class constructor will also get instantiated, and it will trigger a chain reaction of object creation, this can really slow down the process, so to stop chiain reaction of object creation magento2 uses proxy design pattern.
+
+
+Object Manager
+	Magento 2 Object Manager is a PHP class responsible for creating and retrieving objects in Magento 2. It also manages to create factories and proxies
+
+
+Composer Install/ Update
+	composer update is mostly used in the 'development' phase, to upgrade our project packages. composer install is primarily used in the 'deploying phase' to install our application on a production server or on a testing environment, using the same dependencies stored in the composer.
+
+
+Indexing
+	Indexing is how Adobe Commerce and Magento Open Source transform data such as products and categories, to improve the performance of your storefront. As data changes, the transformed data must be updated or reindexed. The application has a very sophisticated architecture that stores lots of merchant data (including catalog data, prices, users, and stores) in many database tables. To optimize storefront performance, the application accumulates data into special tables using indexers.
+
+SSO : Single Sign On : enabes user to login to 3rd party application using magento credentials
+
+
+Magento 2 content security policy
+	CSP is implemented in Magento 2.3.5 with an aim to offer an additional layer of defence to detect and mitigate the Cross-Site Scripting and its related data injection attacks.
+	CSP cannot be implemented to its full potential due to Magento’s frontend Javascript.
+	Talking about Inline Javascript, Magento needs to allow the “unsafe-inline” as inline JS is used massively throughout the platform. Now that’s what the attackers are looking for, i.e., inline <script> tag and Magento offers it out of compulsion!
+
+
+Define the Schema Resolver
+	Resolvers are responsible for handling queries and mutations. In Magento 2, resolvers are defined as PHP classes. You can define your resolvers in a separate directory, such as Model/Resolver.
+
+GraphQL	: https://onilab.com/blog/magento-graphql-guide
+	GraphQL is a data query language. It allows developers to get the data they need and only receive it in response to their queries. Magento 2 supports GraphQL to help you streamline your data processes.
+
+		It is capable of retrieving only the data the user has requested in just one call (as opposed to providing the entire scope in several queries). 
+		Unlike its older analogs (such as REST), GraphQL offers a smarter approach to working with data and is a lot faster than its substitutes.
+		Interestingly, GraphQL depends on the data and the code that's behind it; thus, it isn't linked to storage or a database.
+
+		To create a GraphQL module in Magento 2
+
+How to create a custom graphQL query
+	https://magento.stackexchange.com/questions/351566/magento-2-how-to-create-graphql-query
+	Step 1 :- You Create registration.php file
+	Step 2 :- create etc/module.xml file
+	Step 3 :- GraphQL queries are declared under etc/schema.graphqls
+		type Query {
+		    testcustomer( email: String @doc(description: "email of the customer")): Testcustomer @resolver(class:"Mag\\Mohit\\Model\\Resolver\\Customer") @doc(description:"The testcustomer query returns information about a customer") @cache(cacheable: false)
+		}
+		type Testcustomer @doc(description: "Testcustomer defines the customer name and other details") {
+		    entity_id: Int
+		    firstname: String
+		    lastname: String
+		    email: String
+		    created_in: String
+		    created_at: String
+		}
+
+	Setp 4 :- Create Resolver Class Model/Resolver/Customer.php
+		Resolvers are responsible for handling queries and mutations. In Magento 2, resolvers are defined as PHP classes. You can define your resolvers in a separate directory, such as Model/Resolver.
+	Explaintion :-
+
+	Resolver class must implement Magento\Framework\GraphQl\Query\ResolverInterface
+	"resolve" is the main method of this class, with $args as the query’s input
+	
+	Setp 5 :- Final step you check output. Run this query
+		{
+		    testcustomer(email: "magemohit@gmail.com") {
+		        entity_id
+		        firstname
+		        lastname
+		        email
+		        created_in
+		        created_at
+		    }
+		}
+
+
+WEBAPI.XML
+	First you need to create webapi.xml under your custom module Vendor\Module\etc\
+
+	<route url="/V1/custom/:categoryId/products" method="GET">
+	    <service class="Vendor\Module\Api\CategoryLinkManagementInterface" method="getAssignedProducts" />
+	    <resources>
+	        <resource ref="self"/>
+	    </resources>
+	</route>
+	– Route – This is the URL which will be used to call our API
+
+	https://{{MagentoBaseURL}}/index.php/rest/V1/custom/{{categoryId}}/products
+
+	– Service Class – This is the interface class of our API and the main method “getAssignedProducts” will be called with {{categoryId}} as the parameter
+
+	– Resources- This defines who has the permission to call this API. It could be anonymous (everyone) or self (customer) or specific admin user with specific permission for example Vendor_Module::custom which can be added in acl.xml
+
+Mview & Indexing (https://developer.adobe.com/commerce/php/development/components/indexing/#:~:text=Indexing%20is%20how%20Adobe%20Commerce,must%20be%20updated%20or%20reindexed.)
+	The mview.xml file is used to track database changes for a certain entity.
+	For example part of Magento/Catalog/etc/mview.xml is tracking category to product relation described in the following record:
+
+	<!-- ... -->
+	<view id="catalog_category_product" class="Magento\Catalog\Model\Indexer\Category\Product" group="indexer">
+	  <subscriptions>
+	    <table name="catalog_category_entity" entity_column="entity_id" />
+	    <table name="catalog_category_entity_int" entity_column="entity_id" />
+	  </subscriptions>
+	</view>
+	<!-- ... -->
+	Explanation of nodes:
+
+	The view node defines an indexer. The id attribute is a name of the indexer table, the class attribute is the indexer executor, the group attribute defines the indexer group.
+	The subscriptions node is a list of tables for tracking changes.
+	The table node defines the certain table to observe and track changes. The attribute name is the name of an observable table, the attribute entity_column is an identifier column of the entity to be re-indexed. So, in the case of catalog_category_product, whenever one or more categories are saved, updated or deleted in catalog_category_entity, the execute method of Magento\Catalog\Model\Indexer\Category\Product will be called with the argument ids containing ids of entities from the column defined under the entity_column attribute. If the indexer type is set to "Update on Save", the method is called right away after the operation. If it is set to "Update by Schedule" the mechanism creates a record in the change log table using MYSQL triggers.
+	A change log table is created according to the naming rule - INDEXER_TABLE_NAME + '_cl', in case of catalog_category_product it will be catalog_category_product_cl. The table contains the version_id auto-increment column and entity_id column that contains identifiers of entities to be re-indexed. For each table node the framework automatically creates MYSQL AFTER triggers for each possible event (INSERT, UPDATE, DELETE).
+
+Create Custom indexer
+	https://magecomp.com/blog/create-custom-indexer-magento-2/
+	Step 1: First, we need to create an “indexer.xml” file inside the extension at the following path.
+	app\code\Vendor\Extension\etc\
+	<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Indexer/etc/indexer.xsd">
+    <indexer id="vendor_extension_indexer" view_id="vendor_extension_indexer" class="Vendor\Extension\Model\Indexer" shared_index="vendor_extension_indexer">
+        <title translate="true">Custom Indexer Title</title>
+        <description translate="true">Custom Indexer Description</description>
+    </indexer>
+	</config>
+
+	Step 2: After that, we need to create the “mview.xml” file inside the extension at the following path.
+	app\code\Vendor\Extension\etc\
+	Then add the below code
+
+	<?xml version="1.0" encoding="UTF-8"?>
+	<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Mview/etc/mview.xsd">
+	    <view id="vendor_extension_indexer" class="Vendor\Extension\Model\Indexer" group="indexer">
+	        <subscriptions>
+	            <table name="phonebook" entity_column="phonebook_id" />
+	        </subscriptions>
+	    </view>
+	</config>
+
+	Step 3: After that, we need to create an “Indexer.php” file inside the extension at the following path.
+	app\code\Vendor\Extension\Model\
+
+		public function execute($ids){
+	    //Used by mview, allows you to process multiple placed orders in the "Update on schedule" mode
+		}
+
+		public function executeFull()
+		{
+		    // TODO: Implement executeFull() method.
+		}
+
+		public function executeList(array $ids)
+		{
+		    // TODO: Implement executeList() method.
+		}
+
+		public function executeRow($id)
+		{
+		    // TODO: Implement executeRow() method.
+		}
+
+		php bin/magento indexer:set-mode realtime
+
+Content Staging 
+	https://experienceleague.adobe.com/docs/commerce-admin/content-design/staging/content-staging.html?lang=en
+
+
+Models, Resource Models, and Collections 
+
+	Models are like a black box which provides a layer of abstraction on top of the resource models. The fetching, extraction, and manipulation of data occur through models. As a rule of thumb, every entity we create (i.e. every table we create in our database) should have its own model class. Every model extends the Magento\Framework\Model\AbstractModelclass
+
+	All of the actual database operations are executed by the resource model. Every model must have a resource model, since all of the methods of a resource model expects a model as its first parameter
+
+	Collections are used when we want to fetch multiple rows from our table. Meaning collections are a group of models. Collections can be used when we want to
+	Fetch multiple rows from a table
+	Join tables with our primary table
+	Select specific columns
+	Apply a WHERE clause to our query
+	Use GROUP BY or ORDER BY in our query
+
+
+what is sales.xml
+	sales.xml contains all kind of total objects like discount, subtotal, grandtotal, tax which display on cart page or order details page in admin and many more places. I can say everthing that is related to total in quote or order defines in this file.
+
+
+
+Token
+Vi/intergration/admin/token
+
+shared catalog
+	B2B for Adobe Commerce gives you the ability to maintain gated shared catalogs with custom pricing for different companies. In addition to the standard, primary, product catalog, it provides customer access to two types of shared catalogs with different pricing structures.
+
+
+
+Extension Attributes (https://webkul.com/blog/add-extension-attribute-magento2/)
+	Extension attributes used to extend interface functionality. They often use more complex data types than custom attributes and these attributes do not appear in the Admin.
+	An extension attribute allows us to overcome the limitations of scalar values. With an extension attribute, we can extend both EAV and non-EAV with complex objects.
+
+
+
+Data patches and schema patch
+
+	A data patch is a class that contains data modification instructions. It is defined in a <Vendor>/<Module_Name>/Setup/Patch/Data/<Patch_Name>.php file and implements \Magento\Framework\Setup\Patch\DataPatchInterface.
+
+	A schema patch contains custom schema modification instructions. These modifications can be complex. It is defined in a <Vendor>/<Module_Name>/Setup/Patch/Schema/<Patch_Name>.php file and implements \Magento\Framework\Setup\Patch\SchemaPatchInterface
+
+DB schema
+	db_schema structure
+	The <Module_Vendor>/<Module_Name>/etc/db_schema.xml file declares a module's database structure.
+
+Customer segmentation
+Customer groups will require you to input the customers that you want in that group while customer segments will try and ‘match’ users to that group
+
+
+Latest features in magento 2 B2B
+	Advanced quoting : streamline their quoting process, create and manage quotes quickly and easily , quotes in one central location
+	Company account : 
+	Quick Order Entry and Requisition Lists
+	Customized Catalogs and Price Lists for Customers
+	Advanced shipping options
+	Security
+
+Diffrence b/w the Wishlist and Customer Segmantation
+
+diffrence b/w Table cli and table replica
+	Replica tables are mainly used for indexer optimization. Replica tables are used to prevent deadlocks or wait locks caused by read/write collisions on the same table.
+
+	In the above causes, Magento uses a separate table for reading and write operations and indexing. As a result of this switching process, customer can freely navigate to the category pages, search pages and user layered navigation pages filtered with price when you run full reindexing in the CLI.
+
+
+
